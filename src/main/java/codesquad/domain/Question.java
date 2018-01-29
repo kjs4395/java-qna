@@ -57,8 +57,8 @@ public class Question extends AbstractEntity implements UrlGeneratable {
         this.contents = contents;
     }
 
-    public void update(Question question) {
-        if (!isOwner(question.writer)) {
+    public void update(Question question, User loginUser) {
+        if (!isOwner(loginUser)) {
             throw new UnAuthorizedException();
         }
         this.title = question.title;
@@ -67,7 +67,7 @@ public class Question extends AbstractEntity implements UrlGeneratable {
 
     public void updateDeleteStatus(User loginUser) throws CannotDeleteException {
         if(!isOwner(loginUser)) {
-            throw new CannotDeleteException("본인의 게시물만 삭제할 수 있습니다.");
+            throw new CannotDeleteException("작성자가 같은 질문만 수정 / 삭제할 수 있습니다.");
         }
         this.deleted = true;
     }

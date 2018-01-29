@@ -1,10 +1,12 @@
 package codesquad.service;
 
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
 import codesquad.UnAuthorizedException;
+import com.google.common.collect.Lists;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Pageable;
@@ -43,7 +45,7 @@ public class QnaService {
 
     public Question update(User loginUser, long id, Question updatedQuestion) {
         Question originalQuestion = questionRepository.findOne(id);
-        originalQuestion.update(updatedQuestion);
+        originalQuestion.update(updatedQuestion, loginUser);
         return questionRepository.save(originalQuestion);
     }
 
@@ -53,8 +55,8 @@ public class QnaService {
         question.updateDeleteStatus(loginUser);
     }
 
-    public Iterable<Question> findAll() {
-        return questionRepository.findByDeleted(false);
+    public List<Question> findAll() {
+        return Lists.newArrayList(questionRepository.findByDeleted(false));
     }
 
     public List<Question> findAll(Pageable pageable) {

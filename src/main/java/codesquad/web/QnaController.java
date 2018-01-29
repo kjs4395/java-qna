@@ -56,7 +56,7 @@ public class QnaController {
             qnaService.deleteQuestion(loginUser, id);
             return "redirect:/";
         } catch (CannotDeleteException e) {
-            return "redirect:/{id}";
+            return "qna/update_failed";
         }
     }
 }
