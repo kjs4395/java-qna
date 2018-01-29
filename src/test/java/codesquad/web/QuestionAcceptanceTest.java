@@ -1,6 +1,7 @@
 package codesquad.web;
 
 import codesquad.domain.Question;
+import codesquad.domain.QuestionRepository;
 import codesquad.domain.User;
 import codesquad.util.HtmlFormDataBuilder;
 import org.junit.Before;
@@ -13,11 +14,12 @@ import org.springframework.util.MultiValueMap;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 public class QuestionAcceptanceTest extends AcceptanceTest{
+    @Autowired
+    private QuestionRepository questionRepository;
 
     private HtmlFormDataBuilder htmlFormDataBuilder;
 
@@ -28,9 +30,11 @@ public class QuestionAcceptanceTest extends AcceptanceTest{
 
     @Test
     public void qnaList() {
+        Question question = new Question(defaultUser(), "새로운 게시물입니다.", "새로운 내용입니다.");
+        questionRepository.save(question);
         ResponseEntity<String> response = template().getForEntity("/", String.class);
         assertThat(response.getStatusCode(), is(HttpStatus.OK));
-        assertTrue(response.getBody().contains("국내에서 Ruby on Rails와 Play가 활성화되기 힘든 이유는 뭘까?"));
+        assertTrue(response.getBody().contains("새로운 게시물입니다."));
     }
 
     @Test
@@ -79,7 +83,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest{
     public void updateQuestion() {
         User loginUser = defaultUser();
         long id = 1;
-        htmlFormDataBuilder.addParameter("_method", "put");
+        htmlFormDataBuilder.addMethod("put");
         htmlFormDataBuilder.addParameter("title", "수정 타이틀입니다.");
         htmlFormDataBuilder.addParameter("contents", "수정 내용입니다.");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
@@ -92,7 +96,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest{
     public void deleteQuestion() {
         User loginUser = defaultUser();
         long id = 1;
-        htmlFormDataBuilder.addParameter("_method", "delete");
+        htmlFormDataBuilder.addMethod("delete");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
         ResponseEntity<String> response = basicAuthTemplate(loginUser).postForEntity(String.format("/questions/%d", id), request, String.class);
 
@@ -103,7 +107,7 @@ public class QuestionAcceptanceTest extends AcceptanceTest{
     public void writerNotEqualsDelete() {
         User loginUser = defaultUser();
         long id = 2;
-        htmlFormDataBuilder.addParameter("_method", "delete");
+        htmlFormDataBuilder.addMethod("delete");
         HttpEntity<MultiValueMap<String, Object>> request = htmlFormDataBuilder.build();
         ResponseEntity<String> response = basicAuthTemplate(loginUser).postForEntity(String.format("/questions/%d", id), request, String.class);
 
