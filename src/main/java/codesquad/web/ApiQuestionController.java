@@ -33,10 +33,6 @@ public class ApiQuestionController {
     @GetMapping("{id}")
     public QuestionDto showQuestion(@PathVariable long id) {
         Question question = qnaService.findById(id);
-
-        if(question == null) {
-            throw new NullPointerException();
-        }
         return question.toQuestionDto();
     }
 
