@@ -6,6 +6,8 @@ import codesquad.domain.User;
 import codesquad.dto.QuestionDto;
 import codesquad.security.LoginUser;
 import codesquad.service.QnaService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +18,10 @@ import java.net.URI;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/api/question")
+@RequestMapping("/api/questions")
 public class ApiQuestionController {
+    private static final Logger log = LoggerFactory.getLogger(ApiQuestionController.class);
+
     @Resource(name = "qnaService")
     private QnaService qnaService;
 
@@ -42,11 +46,13 @@ public class ApiQuestionController {
     }
 
     @DeleteMapping("{id}")
-    public void delete(@LoginUser User loginUser, @PathVariable long id) {
+    public ResponseEntity<Void> delete(@LoginUser User loginUser, @PathVariable long id) {
         try {
             qnaService.deleteQuestion(loginUser, id);
+            return new ResponseEntity<>(HttpStatus.OK);
         } catch (CannotDeleteException e) {
-            e.printStackTrace();
+            log.error("삭제할 수 없는 질문입니다.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
     }
 }

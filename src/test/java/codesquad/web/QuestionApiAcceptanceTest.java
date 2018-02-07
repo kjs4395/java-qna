@@ -27,7 +27,7 @@ public class QuestionApiAcceptanceTest extends AcceptanceTest{
     public void create() {
         QuestionDto questionDto = createQuestionDto();
 
-        String location = createAuthResource("/api/question", questionDto);
+        String location = createAuthResource("/api/questions", questionDto);
 
         QuestionDto dbQuestion = getResource(location, QuestionDto.class);
         assertThat(dbQuestion, is(questionDto));
@@ -37,7 +37,7 @@ public class QuestionApiAcceptanceTest extends AcceptanceTest{
     @Test
     public void showQuestion() {
         QuestionDto createQuestion = createQuestionDto();
-        String location = createAuthResource("/api/question", createQuestion);
+        String location = createAuthResource("/api/questions", createQuestion);
 
         QuestionDto insertedQuestion = getResource(location, QuestionDto.class);
 
@@ -48,7 +48,7 @@ public class QuestionApiAcceptanceTest extends AcceptanceTest{
     @Test
     public void update() {
         QuestionDto newQuestion = createQuestionDto();
-        String location = createAuthResource("/api/question", newQuestion);
+        String location = createAuthResource("/api/questions", newQuestion);
 
         QuestionDto insertedQuestion = getResource(location, QuestionDto.class);
 
@@ -65,7 +65,7 @@ public class QuestionApiAcceptanceTest extends AcceptanceTest{
     public void update_다른사람() {
         User anotherUser = findByUserId("sanjigi");
         QuestionDto newQuestion = createQuestionDto();
-        String location = createAuthResource("/api/question", newQuestion);
+        String location = createAuthResource("/api/questions", newQuestion);
 
         QuestionDto insertedQuestion = getResource(location, QuestionDto.class);
 
@@ -81,7 +81,7 @@ public class QuestionApiAcceptanceTest extends AcceptanceTest{
     @Test
     public void delete() {
         QuestionDto newQuestion = createQuestionDto();
-        String location = createAuthResource("/api/question", newQuestion);
+        String location = createAuthResource("/api/questions", newQuestion);
 
         basicAuthTemplate(loginUser).delete(location);
         QuestionDto questionDto = getResource(location, QuestionDto.class);
@@ -93,7 +93,7 @@ public class QuestionApiAcceptanceTest extends AcceptanceTest{
     public void delete_다른사람() {
         User anotherUser = findByUserId("sanjigi");
         QuestionDto newQuestion = createQuestionDto();
-        String location = createAuthResource("/api/question", newQuestion);
+        String location = createAuthResource("/api/questions", newQuestion);
 
         basicAuthTemplate(anotherUser).delete(location);
 

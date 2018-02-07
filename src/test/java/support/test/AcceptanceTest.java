@@ -48,6 +48,10 @@ public abstract class AcceptanceTest {
     protected <T> T getResource(String location, Class<T> responseType) {
         return template().getForObject(location, responseType);
     }
+
+    protected String standardAnswerUrl() {
+        return "/api/questions/1/answers";
+    }
     protected User defaultUser() {
         return findByUserId(DEFAULT_LOGIN_USER);
     }

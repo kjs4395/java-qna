@@ -1,6 +1,5 @@
 package codesquad.web;
 
-import codesquad.DeleteException;
 import codesquad.domain.User;
 import codesquad.dto.AnswerDto;
 import org.junit.Test;
@@ -9,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import support.test.AcceptanceTest;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertThat;
 
 public class ApiAnswerAcceptanceTest extends AcceptanceTest {
@@ -19,7 +17,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         User loginUser =defaultUser();
         AnswerDto answerDto = new AnswerDto(loginUser, "새로운 답변입니다");
 
-        String location = createAuthResource("/api/questions/1/answers", answerDto);
+        String location = createAuthResource(standardAnswerUrl(), answerDto);
         AnswerDto dbAnswer = getResource(location, AnswerDto.class);
 
         assertThat(dbAnswer, is(dbAnswer));
@@ -29,7 +27,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
     public void updateAnswer() {
         User loginUser = defaultUser();
         AnswerDto answerDto = new AnswerDto(loginUser, "새로운 답변입니다.");
-        String location = createAuthResource("/api/questions/1/answers", answerDto);
+        String location = createAuthResource(standardAnswerUrl(), answerDto);
 
         AnswerDto updateAnswer = new AnswerDto(loginUser, "수정된 답변입니다");
         basicAuthTemplate(loginUser).put(location, updateAnswer);
@@ -45,7 +43,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         User anotherUser = findByUserId("sanjigi");
         User loginUser = defaultUser();
         AnswerDto answerDto = new AnswerDto(loginUser, "새로운 답변입니다.");
-        String location = createAuthResource("/api/questions/1/answers", answerDto);
+        String location = createAuthResource(standardAnswerUrl(), answerDto);
 
         AnswerDto updateAnswer = new AnswerDto(loginUser, "수정된 답변입니다");
 
@@ -60,12 +58,11 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
     public void deleteAnswer() {
         User loginUser = defaultUser();
         AnswerDto answerDto = new AnswerDto(loginUser, "새로운 답변입니다.");
-        String location = createAuthResource("/api/questions/1/answers", answerDto);
+        String location = createAuthResource(standardAnswerUrl(), answerDto);
 
         basicAuthTemplate(loginUser).delete(location);
-
-        AnswerDto answer = getResource(location, AnswerDto.class);
-        assertNull(answer);
+        ResponseEntity<String> response = template().getForEntity(location, String.class);
+        assertThat(response.getStatusCode(), is(HttpStatus.GONE));
     }
 
     @Test
@@ -73,7 +70,7 @@ public class ApiAnswerAcceptanceTest extends AcceptanceTest {
         User anotherUser = findByUserId("sanjigi");
         User loginUser = defaultUser();
         AnswerDto answerDto = new AnswerDto(loginUser, "새로운 답변입니다.");
-        String location = createAuthResource("/api/questions/1/answers", answerDto);
+        String location = createAuthResource(standardAnswerUrl(), answerDto);
 
         basicAuthTemplate(anotherUser).delete(location);
 

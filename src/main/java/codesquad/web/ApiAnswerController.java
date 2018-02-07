@@ -2,7 +2,6 @@ package codesquad.web;
 
 import codesquad.DeleteException;
 import codesquad.domain.Answer;
-import codesquad.domain.Question;
 import codesquad.domain.User;
 import codesquad.dto.AnswerDto;
 import codesquad.security.LoginUser;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import java.net.URI;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/questions/{questionId}/answers")
@@ -27,13 +25,12 @@ public class ApiAnswerController {
     private AnswerService answerService;
 
     @GetMapping("/{id}")
-    public AnswerDto show(@PathVariable long questionId, @PathVariable long id) {
+    public ResponseEntity<AnswerDto> show(@PathVariable long questionId, @PathVariable long id) {
 
         try {
-            return answerService.findById(id);
+            return new ResponseEntity<>(answerService.findById(id), HttpStatus.OK);
         } catch (DeleteException e) {
-            e.printStackTrace();
-            return null;
+            return new ResponseEntity<>(HttpStatus.GONE);
         }
     }
 
